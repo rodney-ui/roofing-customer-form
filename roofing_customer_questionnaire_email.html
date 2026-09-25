@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roofing Customer Questionnaire</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#20262d}
+.wrap{max-width:760px;margin:auto;padding:20px 14px 40px}.card{background:#fff;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.08);overflow:hidden}
+header{background:#1f2933;color:#fff;padding:24px 22px}header h1{margin:0 0 7px;font-size:25px}header p{margin:0;opacity:.85;line-height:1.4}
+form{padding:22px}.section{margin-bottom:25px;padding-bottom:20px;border-bottom:1px solid #e5e7eb}.section:last-of-type{border-bottom:0}
+.section h2{font-size:18px;margin:0 0 15px}label{display:block;font-weight:700;font-size:14px;margin-bottom:7px}.field{margin-bottom:16px}
+input,textarea,select{width:100%;border:1px solid #cbd2d9;border-radius:8px;padding:12px;font-size:16px;background:#fff;color:#20262d}
+textarea{min-height:105px;resize:vertical}.choices{display:grid;gap:9px}.choice{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid #d7dce1;border-radius:8px;cursor:pointer;font-weight:400;margin:0}.choice input{width:auto;margin:0}
+button{width:100%;border:0;border-radius:9px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer}.primary{background:#2563eb;color:#fff}
+.status{margin-top:12px;padding:12px;border-radius:8px;display:none;line-height:1.45}.ok{background:#eef6ee;color:#285c2a}.error{background:#fff0f0;color:#8a1c1c}
+.note{font-size:13px;color:#66727d;line-height:1.45;margin-top:14px}footer{text-align:center;color:#66727d;font-size:12px;padding:0 20px 20px}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<header><h1>Roofing Customer Questionnaire</h1><p>Please complete the information below so we can better understand your roofing needs.</p></header>
+
+<form id="roofForm">
+<div class="section"><h2>Customer Information</h2>
+<div class="field"><label>Full Name <span style="color:#b42318">*</span></label><input name="name" required autocomplete="name"></div>
+<div class="field"><label>Property Address <span style="color:#b42318">*</span></label><input name="address" required autocomplete="street-address"></div>
+<div class="field"><label>Phone Number <span style="color:#b42318">*</span></label><input name="phone" type="tel" required autocomplete="tel"></div>
+<div class="field"><label>Email Address</label><input name="email" type="email" autocomplete="email"></div>
+</div>
+
+<div class="section"><h2>Roof Information</h2>
+<div class="field"><label>Approximately how old is your roof?</label><select name="roofAge"><option value="">Select one</option><option>Less than 5 years</option><option>5–10 years</option><option>11–15 years</option><option>16–20 years</option><option>21–25 years</option><option>More than 25 years</option><option>I'm not sure</option></select></div>
+<div class="field"><label>Do you have any missing or damaged shingles?</label><div class="choices"><label class="choice"><input type="radio" name="missingShingles" value="Yes"> Yes</label><label class="choice"><input type="radio" name="missingShingles" value="No"> No</label><label class="choice"><input type="radio" name="missingShingles" value="Not sure"> Not sure</label></div></div>
+<div class="field"><label>Are there currently any leaks or signs of water intrusion?</label><div class="choices"><label class="choice"><input type="radio" name="leaks" value="Yes"> Yes</label><label class="choice"><input type="radio" name="leaks" value="No"> No</label><label class="choice"><input type="radio" name="leaks" value="Not sure"> Not sure</label></div></div>
+<div class="field"><label>Has the roof been repaired before?</label><div class="choices"><label class="choice"><input type="radio" name="repairs" value="Yes"> Yes</label><label class="choice"><input type="radio" name="repairs" value="No"> No</label><label class="choice"><input type="radio" name="repairs" value="Not sure"> Not sure</label></div></div>
+</div>
+
+<div class="section"><h2>Replacement Plans</h2>
+<div class="field"><label>When are you planning to replace your roof?</label><select name="replacement"><option value="">Select one</option><option>As soon as possible</option><option>Within 30 days</option><option>Within 3 months</option><option>Within 6 months</option><option>Within 12 months</option><option>Just researching for now</option><option>I'm not sure</option></select></div>
+<div class="field"><label>How do you plan to pay for the project?</label><div class="choices"><label class="choice"><input type="radio" name="payment" value="Cash"> Cash</label><label class="choice"><input type="radio" name="payment" value="Financing"> I would like financing options</label><label class="choice"><input type="radio" name="payment" value="Not sure"> I'm not sure yet</label></div></div>
+</div>
+
+<div class="section"><h2>Additional Information</h2><div class="field"><label>Is there anything else you'd like us to know?</label><textarea name="comments" placeholder="Tell us about concerns, previous storm damage, repairs, or questions."></textarea></div></div>
+
+<button type="submit" class="primary" id="submitBtn">Submit Questionnaire</button>
+<div class="status" id="status"></div>
+<div class="note">Your information will be sent securely to the roofing company by email when you submit. The first submission may trigger an email asking the owner to activate the form.</div>
+</form>
+<footer>Roofing Customer Questionnaire</footer>
+</div></div>
+
+<script>
+const form=document.getElementById('roofForm');
+const statusBox=document.getElementById('status');
+const submitBtn=document.getElementById('submitBtn');
+
+form.addEventListener('submit',async function(e){
+  e.preventDefault();
+  submitBtn.disabled=true;
+  submitBtn.textContent='Submitting...';
+  statusBox.style.display='none';
+
+  const data=Object.fromEntries(new FormData(form).entries());
+
+  try{
+    const response=await fetch('https://formsubmit.co/ajax/rodney@drroofingandconstruction.com',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        ...data,
+        _subject:'New Roofing Customer Questionnaire',
+        _template:'table'
+      })
+    });
+
+    const result=await response.json();
+
+    if(response.ok && result.success){
+      form.reset();
+      statusBox.className='status ok';
+      statusBox.textContent='Thank you. Your questionnaire has been submitted successfully.';
+      statusBox.style.display='block';
+    }else{
+      throw new Error('Submission failed');
+    }
+  }catch(err){
+    statusBox.className='status error';
+    statusBox.textContent='The form could not be submitted. Please check your internet connection and try again.';
+    statusBox.style.display='block';
+  }finally{
+    submitBtn.disabled=false;
+    submitBtn.textContent='Submit Questionnaire';
+  }
+});
+</script>
+</body>
+</html>
